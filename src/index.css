@@ -62,6 +62,10 @@
     --input-border: 240 3.7% 15.9%;
     --ring: var(--electric-blue);
     
+    /* Popover elements */
+    --popover: 240 10% 3.9%;
+    --popover-foreground: var(--foreground);
+    
     /* Bold destructive actions */
     --destructive: var(--error);
     --destructive-foreground: var(--foreground);
@@ -122,6 +126,9 @@
     
     --input: 0 0% 100%;
     --input-border: 214.3 31.8% 91.4%;
+    
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 84% 4.9%;
     
     --border: 214.3 31.8% 91.4%;
     
