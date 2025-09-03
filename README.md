@@ -1,22 +1,22 @@
-# Welcome to your Lovable project
+# Welcome to ExpenseFlow - Premium Expense Manager
 
 ## Project info
 
-**URL**: https://lovable.dev/projects/41ea39d2-680a-4d57-ab04-490e009efeb8
+**Created By**: HEMAVATHI from Dream Team Services
 
 ## How can I edit this code?
 
 There are several ways of editing your application.
 
-**Use Lovable**
+**Use ExpenseFlow**
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/41ea39d2-680a-4d57-ab04-490e009efeb8) and start prompting.
+Simply visit the ExpenseFlow application and start managing your expenses efficiently.
 
-Changes made via Lovable will be committed automatically to this repo.
+Changes made to the codebase will be tracked in this repository.
 
 **Use your preferred IDE**
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will be tracked in the repository.
 
 The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
 
@@ -62,12 +62,12 @@ This project is built with:
 
 ## How can I deploy this project?
 
-Simply open [Lovable](https://lovable.dev/projects/41ea39d2-680a-4d57-ab04-490e009efeb8) and click on Share -> Publish.
+Use your preferred deployment method (Vercel, Netlify, etc.) to deploy this project.
 
-## Can I connect a custom domain to my Lovable project?
+## Can I connect a custom domain to my ExpenseFlow project?
 
 Yes, you can!
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
+To connect a domain, follow your hosting provider's instructions for connecting a custom domain to your deployed application.
 
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+For more information, contact HEMAVATHI from Dream Team Services.
