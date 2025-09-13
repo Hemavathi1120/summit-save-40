@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from '../hooks/use-navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -15,10 +15,12 @@ import {
 } from 'lucide-react';
 import { toast } from '@/hooks/use-toast';
 import { CURRENCY } from '@/config/text.constants';
+import { PremiumUpgradeModal } from '@/components/business/PremiumUpgradeModal';
 
 export default function SimplifiedHome() {
   const navigate = useNavigate();
   const { currentUser, userProfile } = useAuth();
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
   
   if (!currentUser || !userProfile) {
     return null;
@@ -34,6 +36,12 @@ export default function SimplifiedHome() {
   
   return (
     <div className="min-h-screen bg-background page-enter">
+      {/* Premium Upgrade Modal */}
+      <PremiumUpgradeModal 
+        isOpen={premiumModalOpen}
+        onClose={() => setPremiumModalOpen(false)}
+      />
+      
       {/* Header */}
       <header className="container mx-auto px-6 py-12 mb-4">
         <div className="text-center space-y-4">
@@ -120,7 +128,10 @@ export default function SimplifiedHome() {
                 <div className="space-y-4">
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Status</span>
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-xs font-medium">
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-xs font-medium cursor-pointer" onClick={(e) => {
+                      e.stopPropagation();
+                      setPremiumModalOpen(true);
+                    }}>
                       <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
                       Trial Mode
                     </span>
@@ -128,19 +139,34 @@ export default function SimplifiedHome() {
                   
                   <div className="flex items-center justify-between">
                     <span className="text-muted-foreground">Team members</span>
-                    <span className="text-sm">3/5</span>
+                    <span className="text-sm cursor-pointer text-blue-600 dark:text-blue-400 underline" onClick={(e) => {
+                      e.stopPropagation();
+                      setPremiumModalOpen(true);
+                    }}>3/5 (Upgrade)</span>
                   </div>
                   
-                  <Button 
-                    className="w-full rounded-xl mt-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      navigate('/business');
-                    }}
-                  >
-                    Go to Dashboard
-                    <ChevronRight className="ml-2 h-4 w-4" />
-                  </Button>
+                  <div className="flex gap-2 mt-2">
+                    <Button 
+                      variant="outline"
+                      className="flex-1 rounded-xl border-blue-400 text-blue-700 dark:text-blue-400"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setPremiumModalOpen(true);
+                      }}
+                    >
+                      Upgrade Plan
+                    </Button>
+                    <Button 
+                      className="flex-1 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        navigate('/business');
+                      }}
+                    >
+                      Dashboard
+                      <ChevronRight className="ml-2 h-4 w-4" />
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

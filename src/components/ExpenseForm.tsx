@@ -1,8 +1,8 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { X, Upload, Calendar, Tag, Wallet, Building2, FileText, ChevronRight, ChevronLeft, Check, Receipt, ArrowRight } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
-import { useExpenseStore } from '@/store/expenseStore';
+import { useExpenseStore, type Expense } from '@/store/expenseStore';
 import { APP_CONFIG } from '@/config/app.config';
 import { TEXT, CURRENCY } from '@/config/text.constants';
 import { cn } from '@/lib/utils';
@@ -10,23 +10,24 @@ import { motion, AnimatePresence } from 'framer-motion';
 
 interface ExpenseFormProps {
   onClose: () => void;
+  expenseToEdit?: Expense; // Optional expense to edit
 }
 
 // Define steps for our multi-step form
 type FormStep = 'basics' | 'details' | 'review';
 
-export default function ExpenseForm({ onClose }: ExpenseFormProps) {
-  const { categories, wallets, addExpense } = useExpenseStore();
+export default function ExpenseForm({ onClose, expenseToEdit }: ExpenseFormProps) {
+  const { categories, wallets, addExpense, updateExpense } = useExpenseStore();
   // Track the current step in our multi-step form
   const [currentStep, setCurrentStep] = useState<FormStep>('basics');
   const [formData, setFormData] = useState({
-    title: '',
-    amount: '',
-    date: new Date().toISOString().split('T')[0],
-    categoryId: '',
-    walletId: '',
-    merchant: '',
-    notes: '',
+    title: expenseToEdit?.title || '',
+    amount: expenseToEdit?.amount ? String(expenseToEdit.amount) : '',
+    date: expenseToEdit?.date || new Date().toISOString().split('T')[0],
+    categoryId: expenseToEdit?.categoryId || '',
+    walletId: expenseToEdit?.walletId || '',
+    merchant: expenseToEdit?.merchant || '',
+    notes: expenseToEdit?.notes || '',
   });
   
   // Animation variants for step transitions
@@ -64,8 +65,7 @@ export default function ExpenseForm({ onClose }: ExpenseFormProps) {
       return;
     }
     
-    // Final submission - save the expense
-    addExpense({
+    const expenseData = {
       title: formData.title,
       amount: parseFloat(formData.amount),
       date: formData.date,
@@ -73,7 +73,14 @@ export default function ExpenseForm({ onClose }: ExpenseFormProps) {
       walletId: formData.walletId,
       merchant: formData.merchant,
       notes: formData.notes,
-    });
+    };
+    
+    // Check if we're editing an existing expense or adding a new one
+    if (expenseToEdit) {
+      updateExpense(expenseToEdit.id, expenseData);
+    } else {
+      addExpense(expenseData);
+    }
 
     onClose();
   };
@@ -112,7 +119,9 @@ export default function ExpenseForm({ onClose }: ExpenseFormProps) {
         <div className="flex flex-col space-y-4 mb-6">
           <div className="flex items-center justify-between">
             <div className="space-y-1">
-              <h2 className="text-2xl font-bold gradient-text">{TEXT.forms.addNewExpense}</h2>
+              <h2 className="text-2xl font-bold gradient-text">
+                {expenseToEdit ? 'Edit Expense' : TEXT.forms.addNewExpense}
+              </h2>
               <p className="text-muted-foreground text-sm">
                 {currentStep === 'basics' && TEXT.forms.steps.basics}
                 {currentStep === 'details' && TEXT.forms.steps.details}

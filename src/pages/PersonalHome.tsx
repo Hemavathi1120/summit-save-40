@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { AreaChart, BarChart, CircleDollarSign, PiggyBank, Target, TrendingUp, User, Wallet } from 'lucide-react';
+import { useExpenseStore } from '@/store/expenseStore';
 
 // Mock text constants
 const text = {
@@ -34,6 +35,15 @@ import { CURRENCY } from '@/config/text.constants';
 // Utility functions
 const formatCurrency = (amount: number) => {
   return CURRENCY.format(amount);
+};
+
+const formatDate = (dateString: string) => {
+  const date = new Date(dateString);
+  return date.toLocaleDateString('en-US', { 
+    month: 'short', 
+    day: 'numeric',
+    year: date.getFullYear() !== new Date().getFullYear() ? 'numeric' : undefined
+  });
 };
 
 // Mock components
@@ -87,29 +97,8 @@ const CategoryChart = ({ expenses, isLoading, type }: { expenses: any[]; isLoadi
   );
 };
 
-const ExpenseList = ({ expenses, isLoading, showFilters, className }: { expenses: any[]; isLoading: boolean; showFilters?: boolean; className?: string }) => {
-  return (
-    <div className={className || ""}>
-      {isLoading ? (
-        <p className="p-6 text-center">Loading expenses...</p>
-      ) : expenses.length === 0 ? (
-        <p className="p-6 text-center text-muted-foreground">No expenses found</p>
-      ) : (
-        <div className="divide-y divide-border/30">
-          {expenses.map((expense) => (
-            <div key={expense.id} className="p-4 flex items-center justify-between">
-              <div>
-                <p className="font-medium">{expense.title}</p>
-                <p className="text-xs text-muted-foreground">{expense.category} • {expense.date.toLocaleDateString()}</p>
-              </div>
-              <span className="font-semibold">{formatCurrency(expense.amount)}</span>
-            </div>
-          ))}
-        </div>
-      )}
-    </div>
-  );
-};
+// Import the actual ExpenseList component
+import ExpenseList from '@/components/ExpenseList';
 
 const QuickStats = ({ totalBalance, expenses, isLoading }: { totalBalance: number; expenses: any[]; isLoading: boolean }) => {
   return (
@@ -161,12 +150,13 @@ const QuickStats = ({ totalBalance, expenses, isLoading }: { totalBalance: numbe
 
 // Mock hooks
 const useExpenses = () => {
+  const { expenses, categories } = useExpenseStore();
+  
   return {
-    expenses: [
-      { id: 1, title: "Groceries", amount: 125.50, category: "Food", date: new Date() },
-      { id: 2, title: "Internet Bill", amount: 79.99, category: "Utilities", date: new Date() },
-      { id: 3, title: "Movie Tickets", amount: 45.00, category: "Entertainment", date: new Date() }
-    ],
+    expenses: expenses.map(expense => ({
+      ...expense,
+      category: categories.find(c => c.id === expense.categoryId)?.name || "Uncategorized"
+    })),
     isLoading: false,
     error: null,
   };
@@ -943,7 +933,7 @@ export default function PersonalHome() {
                             <span className="font-medium truncate" style={{ maxWidth: '70%' }}>{expense.title}</span>
                             <span className="font-semibold text-blue-700 dark:text-blue-400">{formatCurrency(expense.amount)}</span>
                           </div>
-                          <p className="text-xs text-muted-foreground mt-1">{expense.category} • {expense.date.toLocaleDateString()}</p>
+                          <p className="text-xs text-muted-foreground mt-1">{expense.category} • {formatDate(expense.date)}</p>
                         </div>
                       ))
                     ) : (

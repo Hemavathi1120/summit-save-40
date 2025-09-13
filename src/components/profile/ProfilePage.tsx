@@ -13,6 +13,7 @@ import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
 import { User, Mail, Phone, FileText, LogOut, Save } from 'lucide-react';
 import { BackButton } from '@/components/ui/back-button';
+import { PremiumUpgradeModal } from '@/components/business/PremiumUpgradeModal';
 
 const profileSchema = z.object({
   displayName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -26,6 +27,7 @@ type ProfileForm = z.infer<typeof profileSchema>;
 
 export function ProfilePage() {
   const [isLoading, setIsLoading] = useState(false);
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
   const { currentUser, userProfile, updateUserProfile, logout } = useAuth();
   const navigate = useNavigate();
 
@@ -81,6 +83,12 @@ export function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-background page-enter">
+      {/* Premium Upgrade Modal */}
+      <PremiumUpgradeModal
+        isOpen={premiumModalOpen}
+        onClose={() => setPremiumModalOpen(false)}
+      />
+      
       {/* Enhanced Header */}
       <header className="sticky top-0 z-50 border-b border-border/30 glass bg-background/95 backdrop-blur-xl">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
@@ -164,23 +172,40 @@ export function ProfilePage() {
                 <div className="space-y-3">
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Status:</span>
-                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-xs font-medium">
+                    <span 
+                      className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-xs font-medium cursor-pointer"
+                      onClick={() => setPremiumModalOpen(true)}
+                    >
                       <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
                       Trial Mode
                     </span>
                   </div>
                   <div className="flex items-center justify-between text-sm">
                     <span className="text-muted-foreground">Team Members:</span>
-                    <span className="font-medium">3/5</span>
+                    <span 
+                      className="font-medium text-blue-600 dark:text-blue-400 underline cursor-pointer"
+                      onClick={() => setPremiumModalOpen(true)}
+                    >
+                      3/5 (Upgrade)
+                    </span>
                   </div>
-                  <Button 
-                    variant="outline" 
-                    size="sm" 
-                    onClick={() => navigate('/business')}
-                    className="mt-2 w-full rounded-xl border-blue-400 text-blue-700 dark:text-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
-                  >
-                    Manage Business
-                  </Button>
+                  <div className="flex gap-2 mt-2">
+                    <Button 
+                      variant="outline" 
+                      size="sm" 
+                      onClick={() => navigate('/business')}
+                      className="flex-1 rounded-xl border-blue-400 text-blue-700 dark:text-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                    >
+                      Manage
+                    </Button>
+                    <Button 
+                      size="sm" 
+                      onClick={() => setPremiumModalOpen(true)}
+                      className="flex-1 rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 text-white"
+                    >
+                      Upgrade
+                    </Button>
+                  </div>
                 </div>
               </CardContent>
             </Card>

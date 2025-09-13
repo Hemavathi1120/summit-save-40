@@ -26,6 +26,21 @@ import {
   Users
 } from 'lucide-react';
 import { BusinessExpenseModal } from '@/components/business/BusinessExpenseModal';
+import { PremiumUpgradeModal } from '@/components/business/PremiumUpgradeModal';
+import { CategoryModal } from '@/components/business/CategoryModal';
+import { ApprovalStatusModal } from '@/components/business/ApprovalStatusModal';
+import { TeamMemberModal } from '@/components/business/TeamMemberModal';
+import { RoleSettingsModal } from '@/components/business/RoleSettingsModal';
+import { MemberSettingsModal } from '@/components/business/MemberSettingsModal';
+import { ReportViewModal } from '@/components/business/ReportViewModal';
+import { ReportScheduleModal } from '@/components/business/ReportScheduleModal';
+import { SendReportsModal } from '@/components/business/SendReportsModal';
+import { BusinessProfileModal } from '@/components/business/BusinessProfileModal';
+import { BillingSubscriptionModal } from '@/components/business/BillingSubscriptionModal';
+import { TaxSettingsModal } from '@/components/business/TaxSettingsModal';
+import { NotificationsModal } from '@/components/business/NotificationsModal';
+import { DataManagementModal } from '@/components/business/DataManagementModal';
+import { ExpensePolicyModal } from '@/components/business/ExpensePolicyModal';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -97,10 +112,76 @@ export default function BusinessPage() {
   const [teamMemberModalOpen, setTeamMemberModalOpen] = useState(false);
   const [filterModalOpen, setFilterModalOpen] = useState(false);
   const [exportModalOpen, setExportModalOpen] = useState(false);
+  const [premiumModalOpen, setPremiumModalOpen] = useState(false);
   const [selectedMember, setSelectedMember] = useState<any>(null);
   const [selectedReport, setSelectedReport] = useState<string | null>(null);
   const [selectedSetting, setSelectedSetting] = useState<string | null>(null);
   const [selectedExpense, setSelectedExpense] = useState<any>(null);
+  
+  // Settings section state variables
+  const [businessProfileModalOpen, setBusinessProfileModalOpen] = useState(false);
+  const [billingSubscriptionModalOpen, setBillingSubscriptionModalOpen] = useState(false);
+  const [taxSettingsModalOpen, setTaxSettingsModalOpen] = useState(false);
+  const [notificationsModalOpen, setNotificationsModalOpen] = useState(false);
+  const [dataManagementModalOpen, setDataManagementModalOpen] = useState(false);
+  const [expensePolicyModalOpen, setExpensePolicyModalOpen] = useState(false);
+  
+  // New state variables for expense management
+  const [currentPage, setCurrentPage] = useState(1);
+  const [categoryModalOpen, setCategoryModalOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<{name: string; color: string} | null>(null);
+  const [approvalModalOpen, setApprovalModalOpen] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<{title: string; count: number; color: string} | null>(null);
+  
+  // Team management state variables
+  const [memberSettingsModalOpen, setMemberSettingsModalOpen] = useState(false);
+  const [roleSettingsModalOpen, setRoleSettingsModalOpen] = useState(false);
+  const [selectedRole, setSelectedRole] = useState<{role: string; description: string; count: number} | null>(null);
+  const [teamMembers, setTeamMembers] = useState(TEAM_MEMBERS);
+  
+  // Reports management state variables
+  const [reportViewModalOpen, setReportViewModalOpen] = useState(false);
+  const [reportScheduleModalOpen, setReportScheduleModalOpen] = useState(false);
+  const [sendReportsModalOpen, setSendReportsModalOpen] = useState(false);
+  const [selectedScheduledReport, setSelectedScheduledReport] = useState<{
+    name: string;
+    schedule: string;
+    recipients: string;
+    lastSent?: string;
+    format: string;
+  } | null>(null);
+  const [scheduledReports, setScheduledReports] = useState([
+    { 
+      name: 'Monthly Executive Summary', 
+      schedule: 'Monthly', 
+      recipients: 'Management Team',
+      lastSent: '05/01/2023',
+      format: 'PDF'
+    },
+    { 
+      name: 'Weekly Expense Report', 
+      schedule: 'Weekly', 
+      recipients: 'Finance Team',
+      lastSent: '06/12/2023',
+      format: 'Excel'
+    },
+    { 
+      name: 'Budget vs Actual', 
+      schedule: 'Monthly', 
+      recipients: 'All Team Leaders',
+      lastSent: '05/01/2023',
+      format: 'PDF'
+    },
+  ]);
+  const [categories, setCategories] = useState([
+    { name: 'Office Supplies', color: '#3b82f6' },
+    { name: 'Software & Subscriptions', color: '#8b5cf6' },
+    { name: 'Travel & Accommodation', color: '#f59e0b' },
+    { name: 'Meals & Entertainment', color: '#ec4899' },
+    { name: 'Marketing & Advertising', color: '#10b981' },
+    { name: 'Professional Services', color: '#6366f1' },
+    { name: 'Equipment & Maintenance', color: '#14b8a6' }
+  ]);
   
   // Handler for adding new expense
   const handleAddExpense = (data: any) => {
@@ -113,38 +194,214 @@ export default function BusinessPage() {
   };
   
   // Handler for team member actions
-  const handleAddTeamMember = () => {
-    toast({
-      title: "Add team member",
-      description: "Team member invitation has been sent.",
-    });
+  const handleAddTeamMember = (member: any) => {
+    if (member.deleted) {
+      setTeamMembers(teamMembers.filter(m => m.id !== member.id));
+      toast({
+        title: "Team member removed",
+        description: `${member.name} has been removed from the team.`,
+      });
+    } else if (member.id && teamMembers.some(m => m.id === member.id)) {
+      // Update existing member
+      setTeamMembers(teamMembers.map(m => m.id === member.id ? member : m));
+      toast({
+        title: "Team member updated",
+        description: `${member.name}'s information has been updated.`,
+      });
+    } else {
+      // Add new member
+      setTeamMembers([...teamMembers, member]);
+      toast({
+        title: "Team member added",
+        description: `${member.name} has been added to the team.`,
+      });
+    }
     setTeamMemberModalOpen(false);
   };
   
   const handleMemberSettings = (member: any) => {
     setSelectedMember(member);
+    setMemberSettingsModalOpen(true);
+  };
+  
+  const handleMemberSettingsSave = (updatedMember: any) => {
+    setTeamMembers(teamMembers.map(m => m.id === updatedMember.id ? updatedMember : m));
     toast({
-      title: "Member settings",
-      description: `Viewing settings for ${member.name}.`,
+      title: "Settings updated",
+      description: `Settings for ${updatedMember.name} have been updated.`,
     });
+    setMemberSettingsModalOpen(false);
+  };
+  
+  const handleRoleSettings = (role: any) => {
+    setSelectedRole(role);
+    setRoleSettingsModalOpen(true);
+  };
+  
+  const handleRoleSettingsSave = (updatedRole: any) => {
+    toast({
+      title: "Role updated",
+      description: `${updatedRole.role} role settings have been updated.`,
+    });
+    setRoleSettingsModalOpen(false);
   };
   
   // Handler for report actions
   const handleViewReport = (reportType: string) => {
-    setSelectedReport(reportType);
+    if (reportType.includes('Edit ')) {
+      const reportName = reportType.replace('Edit ', '');
+      const report = scheduledReports.find(r => r.name === reportName);
+      if (report) {
+        setSelectedScheduledReport(report);
+        setReportScheduleModalOpen(true);
+      }
+    } else if (reportType === 'Create New Report' || reportType === 'Schedule New Report') {
+      setSelectedScheduledReport(null);
+      setReportScheduleModalOpen(true);
+    } else if (reportType === 'Send Reports') {
+      setSendReportsModalOpen(true);
+    } else {
+      setSelectedReport(reportType);
+      setReportViewModalOpen(true);
+    }
+  };
+  
+  // Handle report schedule save
+  const handleReportScheduleSave = (reportData: any) => {
+    if (reportData.deleted) {
+      // Handle report deletion
+      setScheduledReports(scheduledReports.filter(r => r.name !== reportData.name));
+      toast({
+        title: "Report deleted",
+        description: `${reportData.name} has been removed.`,
+      });
+    } else if (selectedScheduledReport) {
+      // Update existing report
+      setScheduledReports(scheduledReports.map(r => 
+        r.name === selectedScheduledReport.name ? reportData : r
+      ));
+      toast({
+        title: "Report updated",
+        description: `${reportData.name} has been updated.`,
+      });
+    } else {
+      // Add new report
+      setScheduledReports([...scheduledReports, reportData]);
+      toast({
+        title: "Report scheduled",
+        description: `${reportData.name} has been scheduled.`,
+      });
+    }
+    setReportScheduleModalOpen(false);
+  };
+  
+  // Handle send reports
+  const handleSendReports = (data: any) => {
     toast({
-      title: "Loading report",
-      description: `Opening ${reportType} report...`,
+      title: "Reports sent",
+      description: `${data.reports.length} report(s) sent to recipients.`,
     });
   };
   
   // Handler for settings actions
   const handleSettingClick = (setting: string) => {
     setSelectedSetting(setting);
+    
+    switch(setting) {
+      case 'Business Profile':
+        setBusinessProfileModalOpen(true);
+        break;
+      case 'Billing & Subscription':
+        setBillingSubscriptionModalOpen(true);
+        break;
+      case 'Tax Settings':
+        setTaxSettingsModalOpen(true);
+        break;
+      case 'Notifications':
+        setNotificationsModalOpen(true);
+        break;
+      case 'Data Management':
+        setDataManagementModalOpen(true);
+        break;
+      default:
+        toast({
+          title: setting,
+          description: `Opening ${setting} settings...`,
+        });
+    }
+  };
+  
+  // Handler for business profile settings
+  const handleBusinessProfileSave = (data: any) => {
     toast({
-      title: setting,
-      description: `Opening ${setting} settings...`,
+      title: "Business Profile Updated",
+      description: "Your business profile has been updated successfully.",
     });
+    setBusinessProfileModalOpen(false);
+  };
+  
+  // Handler for billing and subscription settings
+  const handleBillingSubscriptionSave = (data: any) => {
+    toast({
+      title: "Billing Settings Updated",
+      description: `Your subscription has been updated to ${data.plan.charAt(0).toUpperCase() + data.plan.slice(1)} plan.`,
+    });
+    setBillingSubscriptionModalOpen(false);
+  };
+  
+  // Handler for tax settings
+  const handleTaxSettingsSave = (data: any) => {
+    toast({
+      title: "Tax Settings Updated",
+      description: "Your tax settings have been updated successfully.",
+    });
+    setTaxSettingsModalOpen(false);
+  };
+  
+  // Handler for notification settings
+  const handleNotificationSettingsSave = (data: any) => {
+    toast({
+      title: "Notification Preferences Updated",
+      description: "Your notification settings have been saved.",
+    });
+    setNotificationsModalOpen(false);
+  };
+  
+  // Handler for data management settings
+  const handleDataManagementSave = (data: any) => {
+    toast({
+      title: "Data Settings Updated",
+      description: "Your data management settings have been updated.",
+    });
+    setDataManagementModalOpen(false);
+  };
+  
+  // Handler for data export
+  const handleDataExport = (format: string) => {
+    toast({
+      title: "Data Export Initiated",
+      description: `Exporting your data in ${format.toUpperCase()} format.`,
+    });
+  };
+  
+  // Handler for data import
+  const handleDataImport = (file: File | null) => {
+    if (file) {
+      toast({
+        title: "Data Import Initiated",
+        description: `Importing data from ${file.name}.`,
+      });
+    }
+    setDataManagementModalOpen(false);
+  };
+  
+  // Handler for expense policy
+  const handleExpensePolicySave = (data: any) => {
+    toast({
+      title: "Expense Policy Updated",
+      description: "Your expense policy has been updated successfully.",
+    });
+    setExpensePolicyModalOpen(false);
   };
   
   // Handler for expense actions
@@ -178,6 +435,94 @@ export default function BusinessPage() {
         isOpen={expenseModalOpen} 
         onClose={() => setExpenseModalOpen(false)} 
         onSubmit={handleAddExpense} 
+      />
+      
+      {/* Premium Upgrade Modal */}
+      <PremiumUpgradeModal
+        isOpen={premiumModalOpen}
+        onClose={() => setPremiumModalOpen(false)}
+      />
+      
+      {/* Category Modal */}
+      <CategoryModal
+        isOpen={categoryModalOpen}
+        onClose={() => setCategoryModalOpen(false)}
+        category={selectedCategory}
+        onSave={(categoryData) => {
+          if (selectedCategory) {
+            // Edit existing category
+            setCategories(categories.map(c => 
+              c.name === selectedCategory.name ? categoryData : c
+            ));
+            toast({
+              title: "Category updated",
+              description: `${categoryData.name} has been updated`
+            });
+          } else {
+            // Add new category
+            setCategories([...categories, categoryData]);
+            toast({
+              title: "Category added",
+              description: `${categoryData.name} has been added`
+            });
+          }
+          setCategoryModalOpen(false);
+        }}
+      />
+      
+      {/* Approval Status Modal */}
+      <ApprovalStatusModal
+        isOpen={approvalModalOpen}
+        onClose={() => setApprovalModalOpen(false)}
+        status={selectedStatus || {title: '', count: 0, color: ''}}
+      />
+      
+      {/* Team Member Modal */}
+      <TeamMemberModal
+        isOpen={teamMemberModalOpen}
+        onClose={() => setTeamMemberModalOpen(false)}
+        onSave={handleAddTeamMember}
+        member={selectedMember}
+      />
+      
+      {/* Member Settings Modal */}
+      <MemberSettingsModal
+        isOpen={memberSettingsModalOpen}
+        onClose={() => setMemberSettingsModalOpen(false)}
+        onSave={handleMemberSettingsSave}
+        member={selectedMember || null}
+      />
+      
+      {/* Role Settings Modal */}
+      <RoleSettingsModal
+        isOpen={roleSettingsModalOpen}
+        onClose={() => setRoleSettingsModalOpen(false)}
+        onSave={handleRoleSettingsSave}
+        role={selectedRole}
+      />
+      
+      {/* Report View Modal */}
+      <ReportViewModal
+        isOpen={reportViewModalOpen}
+        onClose={() => setReportViewModalOpen(false)}
+        reportType={selectedReport || ''}
+      />
+      
+      {/* Report Schedule Modal */}
+      <ReportScheduleModal
+        isOpen={reportScheduleModalOpen}
+        onClose={() => setReportScheduleModalOpen(false)}
+        onSave={handleReportScheduleSave}
+        report={selectedScheduledReport}
+        isNew={!selectedScheduledReport}
+      />
+      
+      {/* Send Reports Modal */}
+      <SendReportsModal
+        isOpen={sendReportsModalOpen}
+        onClose={() => setSendReportsModalOpen(false)}
+        onSend={handleSendReports}
+        scheduledReports={scheduledReports}
       />
       
       {/* Header */}
@@ -256,9 +601,13 @@ export default function BusinessPage() {
                       <p className="text-sm text-muted-foreground">Billing Cycle</p>
                       <p className="font-medium">Monthly</p>
                     </div>
-                    <div>
+                    <div 
+                      className="cursor-pointer hover:bg-accent/30 p-1 rounded-md transition-colors"
+                      onClick={() => setPremiumModalOpen(true)}
+                    >
                       <p className="text-sm text-muted-foreground">Team Members</p>
                       <p className="font-medium">3 of 5 seats filled</p>
+                      <p className="text-xs text-blue-600 dark:text-blue-400">Click to upgrade for more seats</p>
                     </div>
                   </div>
                 </div>
@@ -285,13 +634,7 @@ export default function BusinessPage() {
                     
                     <Button 
                       className="w-full rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90"
-                      onClick={() => {
-                        toast({
-                          title: "Upgrade to Premium",
-                          description: "Premium upgrade page opened.",
-                          variant: "default",
-                        });
-                      }}
+                      onClick={() => setPremiumModalOpen(true)}
                     >
                       Upgrade to Premium
                     </Button>
@@ -385,7 +728,10 @@ export default function BusinessPage() {
                       <div 
                         key={expense.id} 
                         className="flex items-center justify-between p-3 rounded-lg border bg-card hover:bg-accent/50 transition-colors cursor-pointer"
-                        onClick={() => handleExpenseAction(expense)}
+                        onClick={() => {
+                          setSelectedExpense(expense);
+                          setExpenseModalOpen(true);
+                        }}
                       >
                         <div className="flex items-center gap-4">
                           <div className="w-10 h-10 rounded-full bg-blue-100 dark:bg-blue-900/30 flex items-center justify-center">
@@ -459,8 +805,8 @@ export default function BusinessPage() {
                 { title: 'Add Team Member', icon: UserPlus, color: 'bg-blue-500', handler: () => {
                   setActiveTab('team');
                   setTimeout(() => {
+                    setSelectedMember(null);
                     setTeamMemberModalOpen(true);
-                    handleAddTeamMember();
                   }, 100);
                 }},
                 { title: 'Create Budget', icon: BarChart3, color: 'bg-purple-500', handler: () => {
@@ -505,22 +851,44 @@ export default function BusinessPage() {
                   <CardTitle className="text-lg font-semibold">Team Members</CardTitle>
                   <CardDescription>Manage your business team</CardDescription>
                 </div>
-                <Button 
-                  className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90"
-                  onClick={() => {
-                    setTeamMemberModalOpen(true);
-                    handleAddTeamMember();
-                  }}
-                >
-                  <UserPlus className="h-4 w-4 mr-2" />
-                  Add Member
-                </Button>
+                <div className="flex gap-2">
+                  <Button 
+                    variant="outline"
+                    className="rounded-xl border-blue-400 text-blue-700 dark:text-blue-400"
+                    onClick={() => setPremiumModalOpen(true)}
+                  >
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2">
+                      <path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>
+                      <path d="M5 3v4"/>
+                      <path d="M19 17v4"/>
+                      <path d="M3 5h4"/>
+                      <path d="M17 19h4"/>
+                    </svg>
+                    Upgrade
+                  </Button>
+                  <Button 
+                    className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90"
+                    onClick={() => {
+                      setSelectedMember(null);
+                      setTeamMemberModalOpen(true);
+                    }}
+                  >
+                    <UserPlus className="h-4 w-4 mr-2" />
+                    Add Member
+                  </Button>
+                </div>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  {TEAM_MEMBERS.map(member => (
+                  {teamMembers.map(member => (
                     <div key={member.id} className="flex items-center justify-between p-4 rounded-lg border bg-card hover:bg-accent/50 transition-colors">
-                      <div className="flex items-center gap-4">
+                      <div 
+                        className="flex items-center gap-4 cursor-pointer"
+                        onClick={() => {
+                          setSelectedMember(member);
+                          setTeamMemberModalOpen(true);
+                        }}
+                      >
                         <Avatar className="h-10 w-10">
                           <AvatarImage src={member.avatar} alt={member.name} />
                           <AvatarFallback className="bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-200">
@@ -553,8 +921,20 @@ export default function BusinessPage() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Card className="rounded-xl border shadow-sm">
                 <CardHeader>
-                  <CardTitle className="text-lg font-semibold">Roles & Permissions</CardTitle>
-                  <CardDescription>Manage access levels for team members</CardDescription>
+                  <div className="flex items-center justify-between">
+                    <div>
+                      <CardTitle className="text-lg font-semibold">Roles & Permissions</CardTitle>
+                      <CardDescription>Manage access levels for team members</CardDescription>
+                    </div>
+                    <Button
+                      variant="outline" 
+                      size="sm"
+                      className="rounded-xl text-sm border-blue-400 text-blue-700 dark:text-blue-400"
+                      onClick={() => setPremiumModalOpen(true)}
+                    >
+                      Upgrade for more roles
+                    </Button>
+                  </div>
                 </CardHeader>
                 <CardContent className="space-y-4">
                   {[
@@ -573,7 +953,7 @@ export default function BusinessPage() {
                         <Button 
                           variant="ghost" 
                           size="sm"
-                          onClick={() => handleSettingClick(`${role.role} Role Settings`)}
+                          onClick={() => handleRoleSettings(role)}
                         >
                           Edit
                         </Button>
@@ -678,29 +1058,7 @@ export default function BusinessPage() {
                 <CardDescription>Automatically generated reports</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
-                {[
-                  { 
-                    name: 'Monthly Executive Summary', 
-                    schedule: 'Monthly', 
-                    recipients: 'Management Team',
-                    lastSent: '05/01/2023',
-                    format: 'PDF'
-                  },
-                  { 
-                    name: 'Weekly Expense Report', 
-                    schedule: 'Weekly', 
-                    recipients: 'Finance Team',
-                    lastSent: '06/12/2023',
-                    format: 'Excel'
-                  },
-                  { 
-                    name: 'Budget vs Actual', 
-                    schedule: 'Monthly', 
-                    recipients: 'All Team Leaders',
-                    lastSent: '05/01/2023',
-                    format: 'PDF'
-                  },
-                ].map((report, i) => (
+                {scheduledReports.map((report, i) => (
                   <div key={i} className="flex justify-between items-center p-4 rounded-lg border">
                     <div>
                       <h4 className="font-medium">{report.name}</h4>
@@ -830,7 +1188,10 @@ export default function BusinessPage() {
                     </div>
                   </div>
                   
-                  <Button className="w-full rounded-xl">
+                  <Button 
+                    className="w-full rounded-xl"
+                    onClick={() => setExpensePolicyModalOpen(true)}
+                  >
                     <FileText className="h-4 w-4 mr-2" />
                     Edit Expense Policy
                   </Button>
@@ -888,7 +1249,10 @@ export default function BusinessPage() {
                 </Button>
                 <Button 
                   className="rounded-xl bg-gradient-to-r from-blue-600 to-indigo-600 hover:opacity-90"
-                  onClick={() => setExpenseModalOpen(true)}
+                  onClick={() => {
+                    setSelectedExpense(null);
+                    setExpenseModalOpen(true);
+                  }}
                 >
                   <Plus className="h-4 w-4 mr-2" />
                   New Expense
@@ -912,11 +1276,14 @@ export default function BusinessPage() {
                       <div className="text-right">Amount</div>
                     </div>
                     
-                    {[...RECENT_EXPENSES, ...RECENT_EXPENSES].slice(0, 8).map((expense, i) => (
+                    {[...RECENT_EXPENSES, ...RECENT_EXPENSES].slice((currentPage - 1) * 4, currentPage * 4).map((expense, i) => (
                       <div 
                         key={i} 
                         className="grid grid-cols-6 p-3 border-b last:border-0 hover:bg-accent/50 transition-colors cursor-pointer text-sm"
-                        onClick={() => handleExpenseAction(expense)}
+                        onClick={() => {
+                          setSelectedExpense(expense);
+                          setExpenseModalOpen(true);
+                        }}
                       >
                         <div className="col-span-2 font-medium">{expense.title}</div>
                         <div>{expense.category}</div>
@@ -930,11 +1297,38 @@ export default function BusinessPage() {
               </CardContent>
               <CardFooter className="flex justify-between">
                 <div className="text-sm text-muted-foreground">
-                  Showing 8 of 24 expenses
+                  Showing page {currentPage} of 3 ({(currentPage - 1) * 4 + 1}-{Math.min(currentPage * 4, 12)} of 12 expenses)
                 </div>
                 <div className="flex gap-1">
-                  <Button variant="outline" size="sm" disabled>Previous</Button>
-                  <Button variant="outline" size="sm">Next</Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    disabled={currentPage === 1}
+                    onClick={() => {
+                      if (currentPage > 1) {
+                        setCurrentPage(currentPage - 1);
+                        toast({
+                          title: "Page changed",
+                          description: `Viewing page ${currentPage - 1}`
+                        });
+                      }
+                    }}
+                  >
+                    Previous
+                  </Button>
+                  <Button 
+                    variant="outline" 
+                    size="sm"
+                    onClick={() => {
+                      setCurrentPage(currentPage + 1);
+                      toast({
+                        title: "Page changed",
+                        description: `Viewing page ${currentPage + 1}`
+                      });
+                    }}
+                  >
+                    Next
+                  </Button>
                 </div>
               </CardFooter>
             </Card>
@@ -946,28 +1340,33 @@ export default function BusinessPage() {
                   <CardDescription>Manage business expense categories</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-4">
-                  {[
-                    'Office Supplies',
-                    'Software & Subscriptions',
-                    'Travel & Accommodation',
-                    'Meals & Entertainment',
-                    'Marketing & Advertising',
-                    'Professional Services',
-                    'Equipment & Maintenance'
-                  ].map((category, i) => (
-                    <div key={i} className="flex justify-between items-center p-3 rounded-lg border hover:bg-accent/50 transition-colors">
+                  {categories.map((category) => (
+                    <div key={category.name} className="flex justify-between items-center p-3 rounded-lg border hover:bg-accent/50 transition-colors">
                       <div className="flex items-center gap-3">
-                        <div className="w-2 h-2 rounded-full bg-blue-500"></div>
-                        <span>{category}</span>
+                        <div className="w-2 h-2 rounded-full" style={{ backgroundColor: category.color }}></div>
+                        <span>{category.name}</span>
                       </div>
-                      <Button variant="ghost" size="sm">
+                      <Button 
+                        variant="ghost" 
+                        size="sm"
+                        onClick={() => {
+                          setSelectedCategory(category);
+                          setCategoryModalOpen(true);
+                        }}
+                      >
                         Edit
                       </Button>
                     </div>
                   ))}
                 </CardContent>
                 <CardFooter>
-                  <Button className="w-full rounded-xl">
+                  <Button 
+                    className="w-full rounded-xl"
+                    onClick={() => {
+                      setSelectedCategory(null);
+                      setCategoryModalOpen(true);
+                    }}
+                  >
                     <Plus className="h-4 w-4 mr-2" />
                     Add Category
                   </Button>
@@ -987,7 +1386,14 @@ export default function BusinessPage() {
                     { title: 'Rejected', count: 3, color: 'bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-300' },
                     { title: 'Reimbursed', count: 37, color: 'bg-purple-100 text-purple-800 dark:bg-purple-900/30 dark:text-purple-300' },
                   ].map((status, i) => (
-                    <div key={i} className="flex justify-between items-center p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer">
+                    <div 
+                      key={i} 
+                      className="flex justify-between items-center p-3 rounded-lg border hover:bg-accent/50 transition-colors cursor-pointer"
+                      onClick={() => {
+                        setSelectedStatus(status);
+                        setApprovalModalOpen(true);
+                      }}
+                    >
                       <span>{status.title}</span>
                       <Badge className={status.color}>
                         {status.count}
@@ -1000,6 +1406,133 @@ export default function BusinessPage() {
           </TabsContent>
         </Tabs>
       </main>
+      
+      {/* Expense Management Modals */}
+      <BusinessExpenseModal
+        open={expenseModalOpen}
+        onOpenChange={setExpenseModalOpen}
+        onSave={handleAddExpense}
+        selectedExpense={selectedExpense}
+      />
+      
+      <CategoryModal 
+        open={categoryModalOpen}
+        onOpenChange={setCategoryModalOpen}
+        categories={categories}
+        selectedCategory={selectedCategory}
+        onSave={(category) => {
+          if (selectedCategory) {
+            setCategories(categories.map(c => c.name === selectedCategory.name ? category : c));
+          } else {
+            setCategories([...categories, category]);
+          }
+          toast({
+            title: selectedCategory ? "Category updated" : "Category added",
+            description: `${category.name} has been ${selectedCategory ? "updated" : "added"} successfully.`,
+          });
+          setCategoryModalOpen(false);
+        }}
+      />
+      
+      <ApprovalStatusModal 
+        open={approvalModalOpen}
+        onOpenChange={setApprovalModalOpen}
+        selectedStatus={selectedStatus}
+        onSave={(status) => {
+          toast({
+            title: "Status updated",
+            description: `${status.title} status has been updated.`,
+          });
+          setApprovalModalOpen(false);
+        }}
+      />
+      
+      {/* Premium Modal */}
+      <PremiumUpgradeModal
+        open={premiumModalOpen}
+        onOpenChange={setPremiumModalOpen}
+      />
+      
+      {/* Team Management Modals */}
+      <TeamMemberModal
+        open={teamMemberModalOpen}
+        onOpenChange={setTeamMemberModalOpen}
+        onSave={handleAddTeamMember}
+        selectedMember={selectedMember}
+      />
+      
+      <RoleSettingsModal
+        open={roleSettingsModalOpen}
+        onOpenChange={setRoleSettingsModalOpen}
+        selectedRole={selectedRole}
+        onSave={handleRoleSettingsSave}
+      />
+      
+      <MemberSettingsModal
+        open={memberSettingsModalOpen}
+        onOpenChange={setMemberSettingsModalOpen}
+        selectedMember={selectedMember}
+        onSave={handleMemberSettingsSave}
+      />
+      
+      {/* Reports Modals */}
+      <ReportViewModal
+        open={reportViewModalOpen}
+        onOpenChange={setReportViewModalOpen}
+        reportType={selectedReport}
+      />
+      
+      <ReportScheduleModal
+        open={reportScheduleModalOpen}
+        onOpenChange={setReportScheduleModalOpen}
+        selectedReport={selectedScheduledReport}
+        onSave={handleReportScheduleSave}
+      />
+      
+      <SendReportsModal
+        open={sendReportsModalOpen}
+        onOpenChange={setSendReportsModalOpen}
+        onSend={handleSendReports}
+      />
+      
+      {/* Settings Section Modals */}
+      <BusinessProfileModal
+        isOpen={businessProfileModalOpen}
+        onClose={() => setBusinessProfileModalOpen(false)}
+        onSave={handleBusinessProfileSave}
+      />
+      
+      <BillingSubscriptionModal
+        isOpen={billingSubscriptionModalOpen}
+        onClose={() => setBillingSubscriptionModalOpen(false)}
+        onSave={handleBillingSubscriptionSave}
+      />
+      
+      <TaxSettingsModal
+        isOpen={taxSettingsModalOpen}
+        onClose={() => setTaxSettingsModalOpen(false)}
+        onSave={handleTaxSettingsSave}
+      />
+      
+      <NotificationsModal
+        isOpen={notificationsModalOpen}
+        onClose={() => setNotificationsModalOpen(false)}
+        onSave={handleNotificationSettingsSave}
+      />
+      
+      <DataManagementModal
+        isOpen={dataManagementModalOpen}
+        onClose={() => setDataManagementModalOpen(false)}
+        onSave={handleDataManagementSave}
+        onExport={handleDataExport}
+        onImport={handleDataImport}
+      />
+      
+      <ExpensePolicyModal
+        isOpen={expensePolicyModalOpen}
+        onClose={() => setExpensePolicyModalOpen(false)}
+        onSave={handleExpensePolicySave}
+      />
     </div>
   );
 }

@@ -5,6 +5,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { useExpenseStore, type Expense } from '@/store/expenseStore';
 import { CURRENCY, TEXT } from '@/config/text.constants';
+import ExpenseForm from '@/components/ExpenseForm';
 
 export interface ExpenseListProps {
   expenses: Expense[];
@@ -16,6 +17,7 @@ export interface ExpenseListProps {
 export default function ExpenseList({ expenses, isLoading, showFilters = true, className = "" }: ExpenseListProps) {
   const { categories, wallets, deleteExpense } = useExpenseStore();
   const [expandedId, setExpandedId] = useState<string | null>(null);
+  const [editingExpense, setEditingExpense] = useState<Expense | null>(null);
 
   const getCategoryById = (id: string) => categories.find(cat => cat.id === id);
   const getWalletById = (id: string) => wallets.find(wallet => wallet.id === id);
@@ -37,6 +39,14 @@ export default function ExpenseList({ expenses, isLoading, showFilters = true, c
 
   return (
     <div className={className}>
+      {/* Edit Expense Modal */}
+      {editingExpense && (
+        <ExpenseForm
+          onClose={() => setEditingExpense(null)}
+          expenseToEdit={editingExpense}
+        />
+      )}
+      
       {isLoading ? (
         <p className="p-6 text-center">{TEXT.messages.loadingExpenses}</p>
       ) : expenses.length === 0 ? (
@@ -127,6 +137,7 @@ export default function ExpenseList({ expenses, isLoading, showFilters = true, c
                           variant="ghost"
                           size="sm"
                           className="text-primary hover:bg-primary/10"
+                          onClick={() => setEditingExpense(expense)}
                         >
                           <Edit2 className="w-4 h-4 mr-1" />
                           Edit
