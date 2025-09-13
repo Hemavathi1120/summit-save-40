@@ -16,10 +16,10 @@ export const MOCK_CATEGORIES: Category[] = [
 
 // Mock Wallets Configuration
 export const MOCK_WALLETS: Wallet[] = [
-  { id: '1', name: 'Main Checking', balance: 2450.00, currency: 'USD' },
-  { id: '2', name: 'Credit Card', balance: -850.00, currency: 'USD' },
-  { id: '3', name: 'Savings', balance: 15280.00, currency: 'USD' },
-  { id: '4', name: 'Cash Wallet', balance: 125.50, currency: 'USD' },
+  { id: '1', name: 'Main Checking', balance: 180500.00, currency: 'INR' },
+  { id: '2', name: 'Credit Card', balance: -62500.00, currency: 'INR' },
+  { id: '3', name: 'Savings', balance: 1125000.00, currency: 'INR' },
+  { id: '4', name: 'Cash Wallet', balance: 9250.00, currency: 'INR' },
 ];
 
 // Mock Expenses Configuration

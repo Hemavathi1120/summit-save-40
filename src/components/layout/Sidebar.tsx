@@ -7,7 +7,9 @@ import {
   Settings,
   User,
   Wallet,
-  PieChart
+  PieChart,
+  Building, // Import Building icon for business
+  CreditCard // Import CreditCard icon for personal dashboard
 } from 'lucide-react';
 import {
   Sidebar,
@@ -20,6 +22,7 @@ import {
   SidebarMenuItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { cn } from '@/lib/utils';
 
 const menuItems = [
   { title: 'Dashboard', url: '/', icon: Home },
@@ -27,11 +30,13 @@ const menuItems = [
   { title: 'Analytics', url: '/analytics', icon: BarChart3 },
   { title: 'Budgets', url: '/budgets', icon: PieChart },
   { title: 'Wallets', url: '/wallets', icon: Wallet },
+  { title: 'Business', url: '/business', icon: Building }, // Added Business page link
 ];
 
 const accountItems = [
   { title: 'Profile', url: '/profile', icon: User },
   { title: 'Settings', url: '/settings', icon: Settings },
+  { title: 'Personal Dashboard', url: '/personal', icon: CreditCard }, // Added Personal Dashboard link
 ];
 
 export function AppSidebar() {

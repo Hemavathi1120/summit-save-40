@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../../hooks/use-navigation';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -11,7 +11,8 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Textarea } from '@/components/ui/textarea';
 import { Separator } from '@/components/ui/separator';
 import { toast } from '@/hooks/use-toast';
-import { User, Mail, Phone, FileText, LogOut, Save, ArrowLeft } from 'lucide-react';
+import { User, Mail, Phone, FileText, LogOut, Save } from 'lucide-react';
+import { BackButton } from '@/components/ui/back-button';
 
 const profileSchema = z.object({
   displayName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -84,15 +85,12 @@ export function ProfilePage() {
       <header className="sticky top-0 z-50 border-b border-border/30 glass bg-background/95 backdrop-blur-xl">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/')}
-              className="rounded-xl border-2"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
+            <BackButton 
+              destination="/" 
+              size="md"
+              variant="subtle"
+              className="hover:shadow-md"
+            />
             <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow float">
               <User className="w-6 h-6 text-white" />
             </div>
@@ -117,7 +115,7 @@ export function ProfilePage() {
       <main className="container mx-auto px-6 py-12 max-w-4xl">
         <div className="grid lg:grid-cols-3 gap-8">
           {/* Profile Summary Card */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 space-y-6">
             <Card className="card-glass rounded-2xl p-8 border-2 border-border/20 hover-glow">
               <div className="text-center space-y-6">
                 <div className="relative">
@@ -147,6 +145,82 @@ export function ProfilePage() {
                   </div>
                 </div>
               </div>
+            </Card>
+
+            {/* Business Account Block */}
+            <Card className="rounded-2xl border-2 border-border/20 bg-gradient-to-r from-blue-100/60 to-blue-200/40 dark:from-blue-900/40 dark:to-blue-800/30 shadow-sm hover:shadow-md transition-all duration-300">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <div className="w-5 h-5 rounded-md bg-blue-600 dark:bg-blue-500 flex items-center justify-center">
+                    <User className="h-3 w-3 text-white" />
+                  </div>
+                  Business Account
+                </CardTitle>
+                <CardDescription className="text-xs text-muted-foreground">
+                  Advanced features for business expense management
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Status:</span>
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-300 text-xs font-medium">
+                      <div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div>
+                      Trial Mode
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Team Members:</span>
+                    <span className="font-medium">3/5</span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => navigate('/business')}
+                    className="mt-2 w-full rounded-xl border-blue-400 text-blue-700 dark:text-blue-200 dark:border-blue-700 hover:bg-blue-50 dark:hover:bg-blue-900/20"
+                  >
+                    Manage Business
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+
+            {/* Personal Account Block */}
+            <Card className="rounded-2xl border-2 border-border/20 bg-gradient-to-r from-green-100/60 to-green-200/40 dark:from-green-900/40 dark:to-green-800/30 shadow-sm hover:shadow-md transition-all duration-300">
+              <CardHeader className="pb-2">
+                <CardTitle className="flex items-center gap-2 text-base">
+                  <div className="w-5 h-5 rounded-md bg-green-600 dark:bg-green-500 flex items-center justify-center">
+                    <User className="h-3 w-3 text-white" />
+                  </div>
+                  Personal Account
+                </CardTitle>
+                <CardDescription className="text-xs text-muted-foreground">
+                  Track your personal expenses and budgets
+                </CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Status:</span>
+                    <span className="inline-flex items-center gap-1 px-2 py-1 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-300 text-xs font-medium">
+                      <div className="w-1.5 h-1.5 rounded-full bg-green-500"></div>
+                      Active
+                    </span>
+                  </div>
+                  <div className="flex items-center justify-between text-sm">
+                    <span className="text-muted-foreground">Linked Wallets:</span>
+                    <span className="font-medium">2</span>
+                  </div>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={() => navigate('/personal')}
+                    className="mt-2 w-full rounded-xl border-green-400 text-green-700 dark:text-green-200 dark:border-green-700 hover:bg-green-50 dark:hover:bg-green-900/20"
+                  >
+                    View Dashboard
+                  </Button>
+                </div>
+              </CardContent>
             </Card>
           </div>
 

@@ -5,6 +5,14 @@
 
 /* Advanced Premium Design System */
 @layer base {
+  html {
+    scroll-behavior: smooth; /* Add smooth scrolling behavior */
+  }
+  
+  body {
+    overflow-y: auto;
+    overflow-x: hidden;
+  }
   :root {
     /* Core Brand Colors */
     --background: 240 10% 3.9%;

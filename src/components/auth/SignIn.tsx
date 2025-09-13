@@ -5,10 +5,12 @@ import * as z from 'zod';
 import { useAuth } from '@/contexts/AuthContext';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, CardFooter } from '@/components/ui/card';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { toast } from '@/hooks/use-toast';
-import { Eye, EyeOff, Mail, Lock } from 'lucide-react';
+import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react';
+import { Separator } from '@/components/ui/separator';
+import { motion } from 'framer-motion';
 
 const signInSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -54,11 +56,13 @@ export function SignIn({ onSwitchToSignUp }: SignInProps) {
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto">
+    <Card className="w-full max-w-md mx-auto border border-border/40 shadow-lg dark:shadow-primary/5 backdrop-blur-sm bg-card/95">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl text-center">Sign In</CardTitle>
+        <CardTitle className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
+          Welcome Back
+        </CardTitle>
         <CardDescription className="text-center">
-          Enter your email and password to access your account
+          Sign in to your account to continue
         </CardDescription>
       </CardHeader>
       <CardContent>
@@ -69,7 +73,7 @@ export function SignIn({ onSwitchToSignUp }: SignInProps) {
               name="email"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Email</FormLabel>
+                  <FormLabel className="text-foreground">Email</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Mail className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -77,7 +81,7 @@ export function SignIn({ onSwitchToSignUp }: SignInProps) {
                         {...field}
                         type="email"
                         placeholder="Enter your email"
-                        className="pl-10"
+                        className="pl-10 bg-background/50 border-border/50 focus-visible:ring-primary"
                         disabled={isLoading}
                       />
                     </div>
@@ -91,7 +95,7 @@ export function SignIn({ onSwitchToSignUp }: SignInProps) {
               name="password"
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>Password</FormLabel>
+                  <FormLabel className="text-foreground">Password</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
@@ -99,7 +103,7 @@ export function SignIn({ onSwitchToSignUp }: SignInProps) {
                         {...field}
                         type={showPassword ? 'text' : 'password'}
                         placeholder="Enter your password"
-                        className="pl-10 pr-10"
+                        className="pl-10 pr-10 bg-background/50 border-border/50 focus-visible:ring-primary"
                         disabled={isLoading}
                       />
                       <Button
@@ -122,22 +126,41 @@ export function SignIn({ onSwitchToSignUp }: SignInProps) {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? 'Signing in...' : 'Sign In'}
+            
+            <Button 
+              type="submit" 
+              className="w-full group relative overflow-hidden" 
+              disabled={isLoading}
+            >
+              <span className="absolute inset-0 bg-gradient-to-r from-primary/40 to-primary-foreground/40 group-hover:opacity-100 opacity-0 transition-opacity" />
+              <span className="relative flex items-center justify-center gap-2">
+                {isLoading ? 'Signing in...' : (
+                  <>
+                    Sign In <LogIn className="h-4 w-4" />
+                  </>
+                )}
+              </span>
             </Button>
           </form>
         </Form>
-        <div className="mt-4 text-center text-sm">
-          Don't have an account?{' '}
+      </CardContent>
+      <CardFooter className="flex flex-col space-y-4 pt-0">
+        <div className="flex items-center justify-center w-full gap-4 my-2">
+          <Separator className="w-1/3" />
+          <span className="text-xs text-muted-foreground">OR</span>
+          <Separator className="w-1/3" />
+        </div>
+        <div className="text-center text-sm">
+          <span className="text-muted-foreground">Don't have an account?</span>{' '}
           <Button
             variant="link"
-            className="p-0 font-normal"
+            className="p-0 font-medium text-primary"
             onClick={onSwitchToSignUp}
           >
-            Sign up here
+            Create an account
           </Button>
         </div>
-      </CardContent>
+      </CardFooter>
     </Card>
   );
 }

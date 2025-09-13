@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../hooks/use-navigation';
+import { BackButton } from '@/components/ui/back-button';
 import { 
-  ArrowLeft,
   Wallet,
   CreditCard,
   Building2,
@@ -52,52 +52,52 @@ export default function Wallets() {
       id: '1',
       name: 'Primary Checking',
       type: 'checking',
-      balance: 4250.75,
-      currency: 'USD',
+      balance: 312500.00,
+      currency: 'INR',
       color: '#3B82F6',
       icon: Building2,
       isActive: true,
       lastTransaction: '2024-01-20',
-      monthlyChange: -320.50,
+      monthlyChange: -23500.00,
       bank: 'Chase Bank'
     },
     {
       id: '2',
       name: 'Savings Account',
       type: 'savings',
-      balance: 15680.20,
-      currency: 'USD',
+      balance: 1152000.00,
+      currency: 'INR',
       color: '#10B981',
       icon: PiggyBank,
       isActive: true,
       lastTransaction: '2024-01-18',
-      monthlyChange: 500.00,
+      monthlyChange: 36750.00,
       bank: 'Wells Fargo'
     },
     {
       id: '3',
       name: 'Credit Card',
       type: 'credit',
-      balance: -1240.30,
-      currency: 'USD',
+      balance: -91250.00,
+      currency: 'INR',
       color: '#EF4444',
       icon: CreditCard,
       isActive: true,
       lastTransaction: '2024-01-21',
-      monthlyChange: -180.75,
+      monthlyChange: -13300.00,
       bank: 'American Express'
     },
     {
       id: '4',
       name: 'Cash Wallet',
       type: 'cash',
-      balance: 180.00,
-      currency: 'USD',
+      balance: 13200.00,
+      currency: 'INR',
       color: '#F59E0B',
       icon: Wallet,
       isActive: true,
       lastTransaction: '2024-01-19',
-      monthlyChange: -45.00
+      monthlyChange: -3300.00
     }
   ]);
 
@@ -154,15 +154,12 @@ export default function Wallets() {
       <header className="sticky top-0 z-50 border-b border-border/30 glass bg-background/95 backdrop-blur-xl">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/')}
-              className="rounded-xl border-2"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
+            <BackButton 
+              destination="/" 
+              size="md"
+              variant="subtle"
+              className="hover:shadow-md"
+            />
             <div className="w-12 h-12 rounded-xl bg-gradient-hero flex items-center justify-center shadow-glow float">
               <Wallet className="w-6 h-6 text-white" />
             </div>

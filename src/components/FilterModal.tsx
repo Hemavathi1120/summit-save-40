@@ -51,8 +51,8 @@ export default function FilterModal({ onClose, onApplyFilters }: FilterModalProp
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl">
-      <Card className="card-glass w-full max-w-lg rounded-2xl p-8 page-enter border-2 border-border/20 shadow-premium">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-xl">
+      <Card className="card-glass w-full max-w-lg rounded-2xl p-8 page-enter border-2 border-border/20 dark:border-border/40 shadow-premium">
         <div className="flex items-center justify-between mb-8">
           <div className="space-y-1">
             <h2 className="text-2xl font-bold gradient-text">Filter Expenses</h2>

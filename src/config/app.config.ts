@@ -51,9 +51,9 @@ export const APP_CONFIG = {
   
   // Default settings
   defaults: {
-    currency: 'USD',
+    currency: 'INR',
     dateFormat: 'YYYY-MM-DD',
-    locale: 'en-US',
+    locale: 'en-IN',
     theme: 'system',
   },
 } as const;

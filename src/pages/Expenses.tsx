@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../hooks/use-navigation';
 import { 
   Plus, 
   Search, 
@@ -7,10 +7,10 @@ import {
   Calendar, 
   TrendingUp, 
   PieChart,
-  ArrowLeft,
   Download,
   Upload
 } from 'lucide-react';
+import { BackButton } from '@/components/ui/back-button';
 import FilterModal from '@/components/FilterModal';
 import { exportToCSV, exportToJSON, importFromCSV } from '@/utils/exportUtils';
 import { toast } from '@/hooks/use-toast';
@@ -23,6 +23,7 @@ import ExpenseList from '@/components/ExpenseList';
 import CategoryChart from '@/components/CategoryChart';
 import QuickStats from '@/components/QuickStats';
 import { useExpenseStore } from '@/store/expenseStore';
+import { TEXT, CURRENCY } from '@/config/text.constants';
 
 export default function Expenses() {
   const [showAddForm, setShowAddForm] = useState(false);
@@ -124,15 +125,12 @@ export default function Expenses() {
       <header className="sticky top-0 z-50 border-b border-border/30 glass bg-background/95 backdrop-blur-xl">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/')}
-              className="rounded-xl border-2"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
+            <BackButton 
+              destination="/" 
+              size="md"
+              variant="subtle"
+              className="hover:shadow-md"
+            />
             <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow float">
               <TrendingUp className="w-6 h-6 text-white" />
             </div>
@@ -323,7 +321,7 @@ export default function Expenses() {
               </div>
             </CardHeader>
             <CardContent>
-              <ExpenseList expenses={filteredExpenses} />
+              <ExpenseList expenses={filteredExpenses} isLoading={false} />
             </CardContent>
           </Card>
         </section>

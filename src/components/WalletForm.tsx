@@ -4,6 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { toast } from '@/hooks/use-toast';
+import { TEXT, CURRENCY, WALLET } from '@/config/text.constants';
 
 interface WalletFormProps {
   onClose: () => void;
@@ -17,23 +18,29 @@ export default function WalletForm({ onClose, wallet, isEdit = false }: WalletFo
     type: wallet?.type || 'checking',
     balance: wallet?.balance?.toString() || '',
     bank: wallet?.bank || '',
-    currency: wallet?.currency || 'USD',
+    currency: wallet?.currency || 'INR',
   });
 
-  const walletTypes = [
-    { value: 'checking', label: 'Checking Account', icon: Building2 },
-    { value: 'savings', label: 'Savings Account', icon: PiggyBank },
-    { value: 'credit', label: 'Credit Card', icon: CreditCard },
-    { value: 'cash', label: 'Cash Wallet', icon: Wallet },
-  ];
+  // Map icons to wallet types from constants
+  const walletIcons = {
+    checking: Building2,
+    savings: PiggyBank,
+    credit: CreditCard,
+    cash: Wallet,
+  };
+  
+  const walletTypes = WALLET.form.types.map(type => ({
+    ...type,
+    icon: walletIcons[type.value as keyof typeof walletIcons]
+  }));
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     
     if (!formData.name || !formData.balance) {
       toast({
-        title: 'Error',
-        description: 'Please fill in all required fields.',
+        title: WALLET.form.error.title,
+        description: WALLET.form.error.required,
         variant: 'destructive',
       });
       return;
@@ -41,8 +48,8 @@ export default function WalletForm({ onClose, wallet, isEdit = false }: WalletFo
 
     // Here you would normally save to Firebase
     toast({
-      title: isEdit ? 'Account updated!' : 'Account added!',
-      description: `Your ${formData.type} account has been ${isEdit ? 'updated' : 'added'} successfully.`,
+      title: isEdit ? WALLET.form.success.updated : WALLET.form.success.added,
+      description: isEdit ? WALLET.form.success.updatedDesc : WALLET.form.success.addedDesc,
     });
 
     onClose();
@@ -53,14 +60,14 @@ export default function WalletForm({ onClose, wallet, isEdit = false }: WalletFo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl">
-      <Card className="card-glass w-full max-w-lg rounded-2xl p-8 page-enter border-2 border-border/20 shadow-premium">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-xl">
+      <Card className="card-glass w-full max-w-lg rounded-2xl p-8 page-enter border-2 border-border/20 dark:border-border/40 shadow-premium">
         <div className="flex items-center justify-between mb-8">
           <div className="space-y-1">
             <h2 className="text-2xl font-bold gradient-text">
-              {isEdit ? 'Edit Account' : 'Add Account'}
+              {isEdit ? WALLET.form.editAccount : WALLET.form.addAccount}
             </h2>
-            <p className="text-muted-foreground">Manage your financial accounts</p>
+            <p className="text-muted-foreground">{WALLET.form.subtitle}</p>
           </div>
           <Button
             variant="ghost"
@@ -75,14 +82,14 @@ export default function WalletForm({ onClose, wallet, isEdit = false }: WalletFo
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Account Name */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground/80">Account Name</label>
+            <label className="text-sm font-medium text-foreground/80">{WALLET.form.accountName}</label>
             <div className="relative">
               <Wallet className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
                 value={formData.name}
                 onChange={(e) => handleChange('name', e.target.value)}
-                placeholder="e.g., Primary Checking"
+                placeholder={WALLET.form.placeholders.accountName}
                 className="w-full pl-10 pr-4 py-3 rounded-lg border border-input-border bg-input/50 backdrop-blur-sm focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-200"
                 required
               />
@@ -91,7 +98,7 @@ export default function WalletForm({ onClose, wallet, isEdit = false }: WalletFo
 
           {/* Account Type */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground/80">Account Type</label>
+            <label className="text-sm font-medium text-foreground/80">{WALLET.form.accountType}</label>
             <Select value={formData.type} onValueChange={(value) => handleChange('type', value)}>
               <SelectTrigger className="w-full rounded-xl border-2 h-12">
                 <SelectValue />
@@ -112,7 +119,7 @@ export default function WalletForm({ onClose, wallet, isEdit = false }: WalletFo
           {/* Initial Balance */}
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground/80">
-              {formData.type === 'credit' ? 'Current Balance (negative for debt)' : 'Initial Balance'}
+              {formData.type === 'credit' ? WALLET.form.creditBalance || 'Current Balance (negative for debt)' : WALLET.form.balance}
             </label>
             <div className="relative">
               <DollarSign className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
@@ -121,7 +128,7 @@ export default function WalletForm({ onClose, wallet, isEdit = false }: WalletFo
                 step="0.01"
                 value={formData.balance}
                 onChange={(e) => handleChange('balance', e.target.value)}
-                placeholder="0.00"
+                placeholder={WALLET.form.placeholders.balance}
                 className="w-full pl-10 pr-4 py-3 rounded-lg border border-input-border bg-input/50 backdrop-blur-sm focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-200"
                 required
               />
@@ -130,14 +137,14 @@ export default function WalletForm({ onClose, wallet, isEdit = false }: WalletFo
 
           {/* Bank/Institution */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground/80">Bank/Institution (Optional)</label>
+            <label className="text-sm font-medium text-foreground/80">{WALLET.form.bank}</label>
             <div className="relative">
               <Building2 className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
               <input
                 type="text"
                 value={formData.bank}
                 onChange={(e) => handleChange('bank', e.target.value)}
-                placeholder="e.g., Chase Bank"
+                placeholder={WALLET.form.placeholders.bank}
                 className="w-full pl-10 pr-4 py-3 rounded-lg border border-input-border bg-input/50 backdrop-blur-sm focus:ring-2 focus:ring-primary/20 focus:border-primary/50 transition-all duration-200"
               />
             </div>
@@ -145,17 +152,17 @@ export default function WalletForm({ onClose, wallet, isEdit = false }: WalletFo
 
           {/* Currency */}
           <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground/80">Currency</label>
+            <label className="text-sm font-medium text-foreground/80">{WALLET.form.currency}</label>
             <Select value={formData.currency} onValueChange={(value) => handleChange('currency', value)}>
               <SelectTrigger className="w-full rounded-xl border-2 h-12">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
+                <SelectItem value="INR">INR - Indian Rupee</SelectItem>
                 <SelectItem value="USD">USD - US Dollar</SelectItem>
                 <SelectItem value="EUR">EUR - Euro</SelectItem>
                 <SelectItem value="GBP">GBP - British Pound</SelectItem>
                 <SelectItem value="CAD">CAD - Canadian Dollar</SelectItem>
-                <SelectItem value="AUD">AUD - Australian Dollar</SelectItem>
               </SelectContent>
             </Select>
           </div>
@@ -168,7 +175,7 @@ export default function WalletForm({ onClose, wallet, isEdit = false }: WalletFo
               size="lg"
             >
               <Wallet className="w-5 h-5 mr-2" />
-              {isEdit ? 'Update Account' : 'Add Account'}
+              {isEdit ? WALLET.form.updateButton || 'Update Account' : WALLET.form.addAccount}
             </Button>
           </div>
         </form>

@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { X, Target, DollarSign, Calendar, Tag } from 'lucide-react';
+import { X, Target, Calendar, Tag } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -46,8 +46,8 @@ export default function BudgetForm({ onClose, budget, isEdit = false }: BudgetFo
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xl">
-      <Card className="card-glass w-full max-w-lg rounded-2xl p-8 page-enter border-2 border-border/20 shadow-premium">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 dark:bg-black/80 backdrop-blur-xl">
+      <Card className="card-glass w-full max-w-lg rounded-2xl p-8 page-enter border-2 border-border/20 dark:border-border/40 shadow-premium">
         <div className="flex items-center justify-between mb-8">
           <div className="space-y-1">
             <h2 className="text-2xl font-bold gradient-text">
@@ -93,7 +93,7 @@ export default function BudgetForm({ onClose, budget, isEdit = false }: BudgetFo
           <div className="space-y-2">
             <label className="text-sm font-medium text-foreground/80">Budget Limit</label>
             <div className="relative">
-              <DollarSign className="w-4 h-4 absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" />
+              <span className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground font-medium">₹</span>
               <input
                 type="number"
                 step="0.01"

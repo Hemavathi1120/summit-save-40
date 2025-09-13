@@ -1,4 +1,5 @@
 import { useExpenseStore } from '@/store/expenseStore';
+import { CURRENCY } from '@/config/text.constants';
 
 export default function CategoryChart() {
   const { expenses, categories } = useExpenseStore();
@@ -56,7 +57,7 @@ export default function CategoryChart() {
                 <span className="text-sm font-medium">{item.name}</span>
               </div>
               <div className="text-right">
-                <div className="text-sm font-semibold">₹{item.total.toLocaleString('en-IN')}</div>
+                <div className="text-sm font-semibold">{CURRENCY.format(item.total)}</div>
                 <div className="text-xs text-muted-foreground">{item.percentage.toFixed(1)}%</div>
               </div>
             </div>

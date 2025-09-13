@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from '../hooks/use-navigation';
+import { BackButton } from '@/components/ui/back-button';
 import { 
-  ArrowLeft,
   Target,
   Plus,
   Edit,
@@ -46,8 +46,8 @@ export default function Budgets() {
       categoryId: '1',
       categoryName: 'Food & Dining',
       categoryColor: '#3B82F6',
-      limit: 800,
-      spent: 650,
+      limit: 12000,
+      spent: 9750,
       period: 'monthly',
       startDate: '2024-01-01',
       endDate: '2024-01-31'
@@ -57,8 +57,8 @@ export default function Budgets() {
       categoryId: '2', 
       categoryName: 'Transportation',
       categoryColor: '#10B981',
-      limit: 300,
-      spent: 420,
+      limit: 4500,
+      spent: 6300,
       period: 'monthly',
       startDate: '2024-01-01',
       endDate: '2024-01-31'
@@ -68,8 +68,8 @@ export default function Budgets() {
       categoryId: '3',
       categoryName: 'Entertainment',
       categoryColor: '#F59E0B',
-      limit: 200,
-      spent: 150,
+      limit: 3000,
+      spent: 2250,
       period: 'monthly',
       startDate: '2024-01-01',
       endDate: '2024-01-31'
@@ -79,8 +79,8 @@ export default function Budgets() {
       categoryId: '4',
       categoryName: 'Shopping',
       categoryColor: '#EF4444',
-      limit: 500,
-      spent: 320,
+      limit: 7500,
+      spent: 4800,
       period: 'monthly',
       startDate: '2024-01-01',
       endDate: '2024-01-31'
@@ -116,15 +116,12 @@ export default function Budgets() {
       <header className="sticky top-0 z-50 border-b border-border/30 glass bg-background/95 backdrop-blur-xl">
         <div className="container mx-auto px-6 h-20 flex items-center justify-between">
           <div className="flex items-center gap-4">
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={() => navigate('/')}
-              className="rounded-xl border-2"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
+            <BackButton 
+              destination="/" 
+              size="md"
+              variant="subtle"
+              className="hover:shadow-md"
+            />
             <div className="w-12 h-12 rounded-xl bg-gradient-primary flex items-center justify-center shadow-glow float">
               <Target className="w-6 h-6 text-white" />
             </div>
