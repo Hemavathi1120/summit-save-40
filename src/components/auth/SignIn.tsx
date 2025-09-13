@@ -11,6 +11,7 @@ import { toast } from '@/hooks/use-toast';
 import { Eye, EyeOff, Mail, Lock, LogIn } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const signInSchema = z.object({
   email: z.string().email('Invalid email address'),
@@ -27,6 +28,7 @@ export function SignIn({ onSwitchToSignUp }: SignInProps) {
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { login } = useAuth();
+  const navigate = useNavigate();
 
   const form = useForm<SignInForm>({
     resolver: zodResolver(signInSchema),
@@ -44,6 +46,8 @@ export function SignIn({ onSwitchToSignUp }: SignInProps) {
         title: 'Welcome back!',
         description: 'You have successfully signed in.',
       });
+      // Navigate to the home page after successful login
+      navigate('/');
     } catch (error: any) {
       toast({
         title: 'Error',

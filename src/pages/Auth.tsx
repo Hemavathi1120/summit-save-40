@@ -1,12 +1,23 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { SignIn } from '@/components/auth/SignIn';
 import { SignUp } from '@/components/auth/SignUp';
 import { FirebaseSetup } from '@/components/FirebaseSetup';
 import { isConfigured } from '@/config/firebase';
 import { motion, AnimatePresence } from "framer-motion";
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 export default function Auth() {
   const [isSignIn, setIsSignIn] = useState(true);
+  const navigate = useNavigate();
+  const { currentUser } = useAuth();
+
+  // Redirect to home if user is already logged in
+  useEffect(() => {
+    if (currentUser) {
+      navigate('/');
+    }
+  }, [currentUser, navigate]);
 
   // Show setup screen if Firebase is not configured
   if (!isConfigured) {

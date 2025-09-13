@@ -11,6 +11,7 @@ import { toast } from '@/hooks/use-toast';
 import { Eye, EyeOff, Mail, Lock, User, UserPlus } from 'lucide-react';
 import { Separator } from '@/components/ui/separator';
 import { motion } from 'framer-motion';
+import { useNavigate } from 'react-router-dom';
 
 const signUpSchema = z.object({
   displayName: z.string().min(2, 'Name must be at least 2 characters'),
@@ -33,6 +34,7 @@ export function SignUp({ onSwitchToSignIn }: SignUpProps) {
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { signup } = useAuth();
+  const navigate = useNavigate();
 
   const form = useForm<SignUpForm>({
     resolver: zodResolver(signUpSchema),
@@ -52,6 +54,8 @@ export function SignUp({ onSwitchToSignIn }: SignUpProps) {
         title: 'Account created!',
         description: 'Your account has been created successfully.',
       });
+      // Navigate to the home page after successful signup
+      navigate('/');
     } catch (error: any) {
       toast({
         title: 'Error',
