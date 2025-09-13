@@ -41,28 +41,35 @@ export function SignIn({ onSwitchToSignUp }: SignInProps) {
   async function onSubmit(data: SignInForm) {
     setIsLoading(true);
     try {
-      await login(data.email, data.password);
-      toast({
-        title: 'Welcome back!',
-        description: 'You have successfully signed in.',
-      });
-      // Navigate to the home page after successful login
-      navigate('/');
+      // Navigate immediately to show progress while authentication completes in the background
+      // This gives users a faster perceived loading experience
+      navigate('/', { replace: true });
+      
+      // Continue authentication in the background
+      const user = await login(data.email, data.password);
+      
+      // Only show toast if we're still in the app (user hasn't navigated away)
+      if (user) {
+        toast({
+          title: 'Welcome back!',
+          description: 'You have successfully signed in.',
+        });
+      }
     } catch (error: any) {
+      // If there's an error, we need to stop loading and show the error
+      setIsLoading(false);
       toast({
         title: 'Error',
         description: error.message || 'Failed to sign in. Please try again.',
         variant: 'destructive',
       });
-    } finally {
-      setIsLoading(false);
     }
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto border border-border/40 shadow-lg dark:shadow-primary/5 backdrop-blur-sm bg-card/95">
+    <Card className="w-full max-w-md mx-auto border border-gray-100 shadow-lg bg-white">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
+        <CardTitle className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-400">
           Welcome Back
         </CardTitle>
         <CardDescription className="text-center">

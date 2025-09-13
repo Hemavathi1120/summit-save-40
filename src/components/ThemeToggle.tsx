@@ -55,10 +55,10 @@ export default function ThemeToggle() {
 
   return (
     <Button
-      variant="ghost"
-      size="sm"
+      variant="outline"
+      size="icon"
       onClick={toggleTheme}
-      className="btn-premium relative w-10 h-10 p-0"
+      className="rounded-full w-10 h-10 shadow-sm hover:shadow-md transition-shadow bg-background border-border/50"
       aria-label="Toggle theme"
     >
       {getIcon()}

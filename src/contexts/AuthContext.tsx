@@ -24,7 +24,7 @@ interface UserProfile {
 interface AuthContextType {
   currentUser: User | null;
   userProfile: UserProfile | null;
-  login: (email: string, password: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<User>;
   signup: (email: string, password: string, displayName: string) => Promise<void>;
   logout: () => Promise<void>;
   updateUserProfile: (data: Partial<UserProfile>) => Promise<void>;
@@ -73,7 +73,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       throw new Error('Firebase is not configured. Please check your Firebase configuration.');
     }
     
-    await signInWithEmailAndPassword(auth, email, password);
+    const userCredential = await signInWithEmailAndPassword(auth, email, password);
+    return userCredential.user;
   }
 
   async function logout() {

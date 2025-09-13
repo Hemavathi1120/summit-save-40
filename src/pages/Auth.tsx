@@ -6,16 +6,17 @@ import { isConfigured } from '@/config/firebase';
 import { motion, AnimatePresence } from "framer-motion";
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '@/contexts/AuthContext';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export default function Auth() {
   const [isSignIn, setIsSignIn] = useState(true);
   const navigate = useNavigate();
   const { currentUser } = useAuth();
 
-  // Redirect to home if user is already logged in
+  // Redirect to home if user is already logged in - with replace:true for cleaner history
   useEffect(() => {
     if (currentUser) {
-      navigate('/');
+      navigate('/', { replace: true });
     }
   }, [currentUser, navigate]);
 
@@ -25,7 +26,14 @@ export default function Auth() {
   }
 
   return (
-    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-gradient-to-br from-background to-muted p-4">
+    <div className="min-h-screen flex flex-col md:flex-row items-center justify-center bg-white p-4">
+      {/* Theme toggle button */}
+      <div className="fixed top-0 right-0 m-4 z-50">
+        <div className="backdrop-blur-sm bg-background/30 p-1.5 rounded-full shadow-sm hover:shadow-md transition-all">
+          <ThemeToggle />
+        </div>
+      </div>
+      
       {/* Left side branding */}
       <div className="w-full md:w-1/2 p-6 flex flex-col items-center justify-center mb-8 md:mb-0">
         <motion.div
@@ -35,19 +43,20 @@ export default function Auth() {
           className="text-center"
         >
           <div className="flex justify-center mb-6">
-            <div className="h-24 w-24 rounded-full bg-gradient-to-br from-primary to-primary/60 flex items-center justify-center shadow-lg">
+            <div className="h-24 w-24 rounded-full bg-blue-500 flex items-center justify-center shadow-lg">
               <span className="text-4xl font-bold text-white">DTS</span>
             </div>
           </div>
-          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
-            SUMMIT SAVE
+          <h1 className="text-4xl font-bold mb-2 bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-400">
+            EXPENSE MANAGER
           </h1>
           <p className="text-xl mb-6 text-muted-foreground">
             By HEMAVATHI from Dream Team Services
           </p>
           <p className="text-muted-foreground max-w-md">
-            Track expenses, manage budgets, and analyze your spending patterns with 
-            our intuitive expense management platform.
+            Track expenses, manage budgets, and analyze your 
+            spending patterns with our intuitive expense management
+            platform.
           </p>
         </motion.div>
       </div>

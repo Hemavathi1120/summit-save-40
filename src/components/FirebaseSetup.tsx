@@ -2,10 +2,18 @@ import React from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { AlertTriangle, ExternalLink, Settings } from 'lucide-react';
+import ThemeToggle from '@/components/ThemeToggle';
 
 export function FirebaseSetup() {
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4">
+      {/* Theme toggle button */}
+      <div className="fixed top-0 right-0 m-4 z-50">
+        <div className="backdrop-blur-sm bg-background/30 p-1.5 rounded-full shadow-sm hover:shadow-md transition-all">
+          <ThemeToggle />
+        </div>
+      </div>
+      
       <Card className="w-full max-w-2xl">
         <CardHeader className="text-center">
           <div className="w-16 h-16 bg-orange-100 dark:bg-orange-900/20 rounded-full flex items-center justify-center mx-auto mb-4">

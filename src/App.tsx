@@ -32,7 +32,7 @@ function AuthProtectedRoute() {
   const { currentUser } = useAuth();
 
   if (!currentUser) {
-    return <Navigate to="/auth" />;
+    return <Navigate to="/auth" replace />;
   }
 
   return (
@@ -43,14 +43,17 @@ function AuthProtectedRoute() {
 }
 
 function AppRoutes() {
-  const { loading } = useAuth();
+  const { loading, currentUser } = useAuth();
 
+  // Show a minimal loading state that will quickly transition to the app
   if (loading) {
     return (
       <div className="flex h-screen w-screen items-center justify-center">
         <div className="flex flex-col items-center gap-2">
           <div className="h-16 w-16 animate-pulse rounded-full bg-gradient-primary" />
-          <h1 className="text-xl font-bold">Loading...</h1>
+          <h1 className="text-xl font-bold">
+            {currentUser ? 'Preparing your dashboard...' : 'Loading...'}
+          </h1>
         </div>
       </div>
     );

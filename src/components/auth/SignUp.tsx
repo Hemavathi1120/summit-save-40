@@ -49,32 +49,35 @@ export function SignUp({ onSwitchToSignIn }: SignUpProps) {
   async function onSubmit(data: SignUpForm) {
     setIsLoading(true);
     try {
+      // Navigate immediately to give faster perceived performance
+      navigate('/', { replace: true });
+      
+      // Continue signup in background
       await signup(data.email, data.password, data.displayName);
+      
       toast({
         title: 'Account created!',
         description: 'Your account has been created successfully.',
       });
-      // Navigate to the home page after successful signup
-      navigate('/');
     } catch (error: any) {
+      // If there's an error, we need to stay on the page
+      setIsLoading(false);
       toast({
         title: 'Error',
         description: error.message || 'Failed to create account. Please try again.',
         variant: 'destructive',
       });
-    } finally {
-      setIsLoading(false);
     }
   }
 
   return (
-    <Card className="w-full max-w-md mx-auto border border-border/40 shadow-lg dark:shadow-primary/5 backdrop-blur-sm bg-card/95">
+    <Card className="w-full max-w-md mx-auto border border-gray-100 shadow-lg bg-white">
       <CardHeader className="space-y-1">
-        <CardTitle className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary-foreground">
+        <CardTitle className="text-2xl font-bold text-center bg-clip-text text-transparent bg-gradient-to-r from-blue-500 to-blue-400">
           Create Account
         </CardTitle>
         <CardDescription className="text-center">
-          Join SUMMIT SAVE to start managing your finances
+          Join EXPENSE MANAGER to start managing your finances
         </CardDescription>
       </CardHeader>
       <CardContent>
